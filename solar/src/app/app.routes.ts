@@ -15,9 +15,5 @@ export const routes: Routes = [
   {
     path: 'planets/:id',
     component: PlanetDetailComponent
-  },
-  {
-    path: '**',
-    redirectTo: '/planets'
   }
 ];

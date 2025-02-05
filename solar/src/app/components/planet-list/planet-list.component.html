@@ -12,9 +12,7 @@
   
     <div class="grid-container">
       @for (planet of filteredPlanets(); track planet.id) {
-        <app-planet-card 
-          [planet]="planet">
-        </app-planet-card>
+        <app-planet-card [planet]="planet"></app-planet-card>
       }
     </div>
   

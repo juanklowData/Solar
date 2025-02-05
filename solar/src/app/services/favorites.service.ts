@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -6,20 +7,27 @@ import { Injectable, signal } from '@angular/core';
 export class FavoritesService {
   private readonly STORAGE_KEY = 'favorite_planets';
   private favorites = signal<string[]>([]);
+  private platformId = inject(PLATFORM_ID);
 
   constructor() {
-    this.loadFavorites();
+    if (isPlatformBrowser(this.platformId)) {
+      this.loadFavorites();
+    }
   }
 
   private loadFavorites() {
-    const stored = localStorage.getItem(this.STORAGE_KEY);
-    if (stored) {
-      this.favorites.set(JSON.parse(stored));
+    if (isPlatformBrowser(this.platformId)) {
+      const stored = localStorage.getItem(this.STORAGE_KEY);
+      if (stored) {
+        this.favorites.set(JSON.parse(stored));
+      }
     }
   }
 
   private saveFavorites() {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.favorites()));
+    if (isPlatformBrowser(this.platformId)) {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.favorites()));
+    }
   }
 
   toggleFavorite(planetId: string) {

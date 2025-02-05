@@ -1,110 +1,147 @@
-import { Component, Input, inject } from '@angular/core'; // Añadimos inject aquí
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Component, Input, PLATFORM_ID, Inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { Router } from '@angular/router';
 import { Planet } from '../../interfaces/planet.interface';
-import { FavoritesService } from '../../services/favorites.service';
 
 @Component({
   selector: 'app-planet-card',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule],
   template: `
-    <div class="planet-card" [routerLink]="['/planets', planet.id]">
-      <div class="planet-image">{{ planet.image }}</div>
-      <div class="planet-info">
-        <h3>{{ planet.name }}</h3>
-        <p class="description">{{ planet.description }}</p>
-        <div class="planet-details">
-          <span>Masa: {{ planet.mass }}</span>
-        </div>
+    <div class="planet-card">
+      <div class="image-container">
+        <img 
+          [src]="planet.image" 
+          [alt]="planet.name" 
+          class="planet-image"
+          (error)="handleImageError($event)"
+        >
         <button 
-          class="favorite-btn"
+          class="favorite-button" 
           (click)="toggleFavorite($event)"
-          [class.is-favorite]="isFavorite">
-          ⭐
+          [class.is-favorite]="isFavorite"
+        >
+          <i [class]="isFavorite ? 'fas fa-star' : 'far fa-star'"></i>
         </button>
+      </div>
+      <div class="planet-info" (click)="navigateToDetail()">
+        <h3>{{ planet.name }}</h3>
+        <p class="mass">{{ formatMass(planet.mass) }}</p>
+        <p class="density">{{ planet.density }} g/cm³</p>
       </div>
     </div>
   `,
   styles: [`
     .planet-card {
-      background: #2a2a2a;
-      border-radius: 12px;
-      padding: 1.5rem;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      position: relative;
+      width: 180px;
+      margin: 0.5rem;
+      background: var(--card-background);
+      border-radius: var(--border-radius);
       overflow: hidden;
-
+      transition: transform 0.3s ease;
+      
       &:hover {
         transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.3);
       }
+    }
+
+    .image-container {
+      position: relative;
+      height: 120px;
+      overflow: hidden;
     }
 
     .planet-image {
-      font-size: 4rem;
-      text-align: center;
-      margin-bottom: 1rem;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .favorite-button {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background: rgba(0,0,0,0.5);
+      border: none;
+      padding: 6px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 2;
+      transition: all 0.3s ease;
+      color: white;
+      font-size: 0.8rem;
+
+      &.is-favorite {
+        color: #ffd700;
+      }
+
+      &:hover {
+        background: rgba(0,0,0,0.7);
+      }
     }
 
     .planet-info {
-      h3 {
-        color: white;
-        margin: 0;
-        font-size: 1.5rem;
-        text-align: center;
-      }
-
-      .description {
-        color: #ccc;
-        margin: 0.5rem 0;
-        font-size: 0.9rem;
-        line-height: 1.4;
-      }
-
-      .planet-details {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 1rem;
-        font-size: 0.8rem;
-        color: #aaa;
-      }
-    }
-
-    .favorite-btn {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      background: transparent;
-      border: none;
-      font-size: 1.5rem;
+      padding: 0.75rem;
       cursor: pointer;
-      opacity: 0.5;
-      transition: opacity 0.2s, transform 0.2s;
 
-      &:hover {
-        opacity: 1;
-        transform: scale(1.2);
+      h3 {
+        margin: 0;
+        font-size: 1rem;
+        color: white;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
-      &.is-favorite {
-        opacity: 1;
-        filter: drop-shadow(0 0 5px gold);
+      p {
+        margin: 0.25rem 0;
+        font-size: 0.8rem;
+        color: #ccc;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   `]
 })
 export class PlanetCardComponent {
   @Input({ required: true }) planet!: Planet;
-  private favoritesService = inject(FavoritesService);
+  isFavorite: boolean = false;
+  private isBrowser: boolean;
 
-  get isFavorite(): boolean {
-    return this.favoritesService.isFavorite(this.planet.id);
+  constructor(
+    private router: Router,
+    @Inject(PLATFORM_ID) platformId: Object
+  ) {
+    this.isBrowser = isPlatformBrowser(platformId);
   }
 
-  toggleFavorite(event: Event) {
+  toggleFavorite(event: Event): void {
     event.stopPropagation();
-    this.favoritesService.toggleFavorite(this.planet.id);
+    this.isFavorite = !this.isFavorite;
+    
+    if (this.isBrowser) {
+      localStorage.setItem(`favorite_${this.planet.id}`, this.isFavorite.toString());
+    }
+  }
+
+  navigateToDetail(): void {
+    this.router.navigate(['/planets', this.planet.id]);
+  }
+
+  handleImageError(event: any): void {
+    event.target.src = '/assets/images/default-planet.jpg';
+  }
+
+  formatMass(mass: Planet['mass']): string {
+    if (!mass) return 'Desconocida';
+    return `${mass.massValue} × 10^${mass.massExponent} kg`;
+  }
+
+  ngOnInit(): void {
+    if (this.isBrowser) {
+      const savedFavorite = localStorage.getItem(`favorite_${this.planet.id}`);
+      this.isFavorite = savedFavorite === 'true';
+    }
   }
 }
