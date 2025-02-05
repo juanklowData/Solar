@@ -17,67 +17,71 @@ import { signal } from '@angular/core';
         <i class="fas fa-arrow-left"></i> Volver
       </button>
 
-      <div *ngIf="isLoading()" class="loading-indicator">
-        <div class="spinner"></div>
-        <p>Cargando información del planeta...</p>
-      </div>
-
-      <div *ngIf="!isLoading()" class="planet-content animate-in" [@fadeIn]>
-        <div class="planet-header">
-          <div class="planet-sphere rotating">
-            <img 
-              [src]="planet?.image" 
-              [alt]="planet?.name"
-              (error)="handleImageError($event)"
-              class="planet-image"
-            >
-            <div class="planet-glow"></div>
-            <div class="planet-atmosphere"></div>
-          </div>
-          <div class="header-content">
-            <div class="title-section">
-              <h1>{{ planet?.name }}</h1>
-              <button 
-                class="favorite-button" 
-                (click)="toggleFavorite()"
-                [class.is-favorite]="isFavorite"
+      @if (isLoading()) {
+        <div class="loading-indicator">
+          <div class="spinner"></div>
+          <p>Cargando información del planeta...</p>
+        </div>
+      } @else {
+        <div class="planet-content animate-in" [@fadeIn]>
+          <div class="planet-header">
+            <div class="planet-sphere rotating">
+              <img 
+                [src]="planet?.image" 
+                [alt]="planet?.name"
+                (error)="handleImageError($event)"
+                class="planet-image"
               >
-                <span class="favorite-icon">
-                  <i [class]="isFavorite ? 'fas fa-star' : 'far fa-star'"></i>
-                </span>
-                <span class="favorite-text">Favorito</span>
-              </button>
+              <div class="planet-glow"></div>
+              <div class="planet-atmosphere"></div>
             </div>
-
-            <div class="info-sections">
-              <div class="info-section">
-                <h3>Información General</h3>
-                <div class="info-content">
-                  <p><span>Tipo:</span> {{ planet?.bodyType || 'Desconocido' }}</p>
-                  <p><span>Nombre en inglés:</span> {{ planet?.englishName || 'Desconocido' }}</p>
-                  <p><span>Es planeta:</span> {{ planet?.isPlanet ? 'Sí' : 'No' }}</p>
-                </div>
+            <div class="header-content">
+              <div class="title-section">
+                <h1>{{ planet?.name }}</h1>
+                <button 
+                  class="favorite-button" 
+                  (click)="toggleFavorite()"
+                  [class.is-favorite]="isFavorite"
+                >
+                  <span class="favorite-icon">
+                    <i [class]="isFavorite ? 'fas fa-star' : 'far fa-star'"></i>
+                  </span>
+                  <span class="favorite-text">Favorito</span>
+                </button>
               </div>
 
-              <div class="info-section">
-                <h3>Características Físicas</h3>
-                <div class="info-content">
-                  <p><span>Masa:</span> {{ formatMass(planet?.mass) || 'Desconocido' }}</p>
-                  <p><span>Densidad:</span> {{ planet?.density || 'Desconocido' }} g/cm³</p>
-                  <p><span>Gravedad:</span> {{ planet?.gravity || 'Desconocido' }} m/s²</p>
-                  <p><span>Radio medio:</span> {{ planet?.meanRadius || 'Desconocido' }} km</p>
+              <div class="info-sections">
+                <div class="info-section">
+                  <h3>Información General</h3>
+                  <div class="info-content">
+                    <p><span>Tipo:</span> {{ planet?.bodyType || 'Desconocido' }}</p>
+                    <p><span>Nombre en inglés:</span> {{ planet?.englishName || 'Desconocido' }}</p>
+                    <p><span>Es planeta:</span> {{ planet?.isPlanet ? 'Sí' : 'No' }}</p>
+                  </div>
+                </div>
+
+                <div class="info-section">
+                  <h3>Características Físicas</h3>
+                  <div class="info-content">
+                    <p><span>Masa:</span> {{ formatMass(planet?.mass) || 'Desconocido' }}</p>
+                    <p><span>Densidad:</span> {{ planet?.density || 'Desconocido' }} g/cm³</p>
+                    <p><span>Gravedad:</span> {{ planet?.gravity || 'Desconocido' }} m/s²</p>
+                    <p><span>Radio medio:</span> {{ planet?.meanRadius || 'Desconocido' }} km</p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div *ngIf="planet?.discoveredBy" class="discovery-section fade-in">
-          <h3>Descubrimiento</h3>
-          <p>Descubierto por: {{ planet?.discoveredBy }}</p>
-          <p>Fecha: {{ planet?.discoveryDate || 'Desconocida' }}</p>
+          @if (planet?.discoveredBy) {
+            <div class="discovery-section fade-in">
+              <h3>Descubrimiento</h3>
+              <p>Descubierto por: {{ planet?.discoveredBy }}</p>
+              <p>Fecha: {{ planet?.discoveryDate || 'Desconocida' }}</p>
+            </div>
+          }
         </div>
-      </div>
+      }
     </div>
   `,
   styles: [`
@@ -366,7 +370,8 @@ import { signal } from '@angular/core';
     trigger('fadeIn', [
       transition(':enter', [
         style({ opacity: 0, transform: 'translateY(-20px)' }),
-        animate('800ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ opacity: 1, transform: 'translateY(0)' }))
+        animate('800ms cubic-bezier(0.25, 0.8, 0.25, 1)', 
+          style({ opacity: 1, transform: 'translateY(0)' }))
       ])
     ])
   ]

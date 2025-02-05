@@ -10,16 +10,18 @@
       </button>
     </div>
   
-    <div *ngIf="isLoading()" class="loading-indicator">
-      <div class="spinner"></div>
-      <p>Cargando planetas...</p>
-    </div>
-  
-    <div *ngIf="!isLoading()" class="grid-container" [@listAnimation]>
-      @for (planet of filteredPlanets(); track planet.id) {
-        <app-planet-card [planet]="planet" [@cardAnimation]></app-planet-card>
-      }
-    </div>
+    @if (isLoading()) {
+      <div class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Cargando planetas...</p>
+      </div>
+    } @else {
+      <div class="grid-container" [@listAnimation]>
+        @for (planet of filteredPlanets(); track planet.id) {
+          <app-planet-card [planet]="planet" [@cardAnimation]></app-planet-card>
+        }
+      </div>
+    }
   
     <div class="pagination">
       @for (page of totalPages(); track page) {
