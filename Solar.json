@@ -1,0 +1,100 @@
+{
+  "planets": [
+    {
+      "id": "mercury",
+      "name": "Mercurio",
+      "image": "🌑",
+      "mass": "3.3011 x 10^23 kg",
+      "gravity": "3.7 m/s²",
+      "discoveredBy": "Antiguas civilizaciones",
+      "discoveryDate": "Siglo XIV a.C.",
+      "isPlanet": true,
+      "moons": [],
+      "description": "El planeta más pequeño y cercano al Sol"
+    },
+    {
+      "id": "venus",
+      "name": "Venus",
+      "image": "♀",
+      "mass": "4.8675 x 10^24 kg",
+      "gravity": "8.87 m/s²",
+      "discoveredBy": "Antiguas civilizaciones",
+      "discoveryDate": "Siglo XVII a.C.",
+      "isPlanet": true,
+      "moons": [],
+      "description": "El planeta más caliente del sistema solar"
+    },
+    {
+      "id": "earth",
+      "name": "Tierra",
+      "image": "🌍",
+      "mass": "5.97237 x 10^24 kg",
+      "gravity": "9.81 m/s²",
+      "discoveredBy": "-",
+      "discoveryDate": "-",
+      "isPlanet": true,
+      "moons": ["Luna"],
+      "description": "Nuestro hogar, el único planeta con vida conocida"
+    },
+    {
+      "id": "mars",
+      "name": "Marte",
+      "image": "♂",
+      "mass": "6.4171 x 10^23 kg",
+      "gravity": "3.71 m/s²",
+      "discoveredBy": "Antiguas civilizaciones",
+      "discoveryDate": "Siglo II a.C.",
+      "isPlanet": true,
+      "moons": ["Fobos", "Deimos"],
+      "description": "El planeta rojo, objetivo de exploración espacial"
+    },
+    {
+      "id": "jupiter",
+      "name": "Júpiter",
+      "image": "🪐",
+      "mass": "1.8982 x 10^27 kg",
+      "gravity": "24.79 m/s²",
+      "discoveredBy": "Antiguas civilizaciones",
+      "discoveryDate": "Siglo VII a.C.",
+      "isPlanet": true,
+      "moons": ["Ío", "Europa", "Ganímedes", "Calisto"],
+      "description": "El gigante gaseoso con la tormenta más grande"
+    },
+    {
+      "id": "saturn",
+      "name": "Saturno",
+      "image": "🪐",
+      "mass": "5.6834 x 10^26 kg",
+      "gravity": "10.44 m/s²",
+      "discoveredBy": "Antiguas civilizaciones",
+      "discoveryDate": "Siglo VIII a.C.",
+      "isPlanet": true,
+      "moons": ["Titán", "Encélado", "Mimas"],
+      "description": "Famoso por sus espectaculares anillos"
+    },
+    {
+      "id": "uranus",
+      "name": "Urano",
+      "image": "🪐",
+      "mass": "8.6810 x 10^25 kg",
+      "gravity": "8.87 m/s²",
+      "discoveredBy": "William Herschel",
+      "discoveryDate": "1781",
+      "isPlanet": true,
+      "moons": ["Titania", "Oberón"],
+      "description": "El planeta inclinado con anillos verticales"
+    },
+    {
+      "id": "neptune",
+      "name": "Neptuno",
+      "image": "🪐",
+      "mass": "1.02413 x 10^26 kg",
+      "gravity": "11.15 m/s²",
+      "discoveredBy": "Urbain Le Verrier",
+      "discoveryDate": "1846",
+      "isPlanet": true,
+      "moons": ["Tritón", "Nereida"],
+      "description": "El gigante de hielo con vientos supersónicos"
+    }
+  ]
+}
