@@ -14,6 +14,11 @@ export const routes: Routes = [
   },
   {
     path: 'planets/:id',
-    component: PlanetDetailComponent
+    component: PlanetDetailComponent,
+    data: {
+      renderMode: 'client'
+    }
   }
 ];
+
+export default routes;
