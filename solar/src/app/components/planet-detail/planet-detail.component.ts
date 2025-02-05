@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { PlanetService } from '../../services/planet.service';
 import { Planet } from '../../interfaces/planet.interface';
 import { FavoritesService } from '../../services/favorites.service';
+import { trigger, transition, style, animate } from '@angular/animations';
+import { signal } from '@angular/core';
 
 @Component({
   selector: 'app-planet-detail',
@@ -15,71 +17,67 @@ import { FavoritesService } from '../../services/favorites.service';
         <i class="fas fa-arrow-left"></i> Volver
       </button>
 
-      @if (planet) {
-        <div class="planet-content animate-in">
-          <div class="planet-header">
-            <div class="planet-sphere rotating">
-              <img 
-                [src]="planet.image" 
-                [alt]="planet.name"
-                (error)="handleImageError($event)"
-                class="planet-image"
+      <div *ngIf="isLoading()" class="loading-indicator">
+        <div class="spinner"></div>
+        <p>Cargando información del planeta...</p>
+      </div>
+
+      <div *ngIf="!isLoading()" class="planet-content animate-in" [@fadeIn]>
+        <div class="planet-header">
+          <div class="planet-sphere rotating">
+            <img 
+              [src]="planet?.image" 
+              [alt]="planet?.name"
+              (error)="handleImageError($event)"
+              class="planet-image"
+            >
+            <div class="planet-glow"></div>
+            <div class="planet-atmosphere"></div>
+          </div>
+          <div class="header-content">
+            <div class="title-section">
+              <h1>{{ planet?.name }}</h1>
+              <button 
+                class="favorite-button" 
+                (click)="toggleFavorite()"
+                [class.is-favorite]="isFavorite"
               >
-              <div class="planet-glow"></div>
-              <div class="planet-atmosphere"></div>
+                <span class="favorite-icon">
+                  <i [class]="isFavorite ? 'fas fa-star' : 'far fa-star'"></i>
+                </span>
+                <span class="favorite-text">Favorito</span>
+              </button>
             </div>
-            <div class="header-content">
-              <div class="title-section">
-                <h1>{{ planet.name }}</h1>
-                <button 
-                  class="favorite-button" 
-                  (click)="toggleFavorite()"
-                  [class.is-favorite]="isFavorite"
-                >
-                  <span class="favorite-icon">
-                    <i [class]="isFavorite ? 'fas fa-star' : 'far fa-star'"></i>
-                  </span>
-                  <span class="favorite-text">Favorito</span>
-                </button>
+
+            <div class="info-sections">
+              <div class="info-section">
+                <h3>Información General</h3>
+                <div class="info-content">
+                  <p><span>Tipo:</span> {{ planet?.bodyType || 'Desconocido' }}</p>
+                  <p><span>Nombre en inglés:</span> {{ planet?.englishName || 'Desconocido' }}</p>
+                  <p><span>Es planeta:</span> {{ planet?.isPlanet ? 'Sí' : 'No' }}</p>
+                </div>
               </div>
 
-              <div class="info-sections">
-                <div class="info-section">
-                  <h3>Información General</h3>
-                  <div class="info-content">
-                    <p><span>Tipo:</span> {{ planet.bodyType }}</p>
-                    <p><span>Nombre en inglés:</span> {{ planet.englishName }}</p>
-                    <p><span>Es planeta:</span> {{ planet.isPlanet ? 'Sí' : 'No' }}</p>
-                  </div>
-                </div>
-
-                <div class="info-section">
-                  <h3>Características Físicas</h3>
-                  <div class="info-content">
-                    <p><span>Masa:</span> {{ formatMass(planet.mass) }}</p>
-                    <p><span>Densidad:</span> {{ planet.density }} g/cm³</p>
-                    <p><span>Gravedad:</span> {{ planet.gravity }} m/s²</p>
-                    <p><span>Radio medio:</span> {{ planet.meanRadius }} km</p>
-                  </div>
+              <div class="info-section">
+                <h3>Características Físicas</h3>
+                <div class="info-content">
+                  <p><span>Masa:</span> {{ formatMass(planet?.mass) || 'Desconocido' }}</p>
+                  <p><span>Densidad:</span> {{ planet?.density || 'Desconocido' }} g/cm³</p>
+                  <p><span>Gravedad:</span> {{ planet?.gravity || 'Desconocido' }} m/s²</p>
+                  <p><span>Radio medio:</span> {{ planet?.meanRadius || 'Desconocido' }} km</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
 
-          @if (planet.discoveredBy) {
-            <div class="discovery-section fade-in">
-              <h3>Descubrimiento</h3>
-              <p>Descubierto por: {{ planet.discoveredBy }}</p>
-              <p>Fecha: {{ planet.discoveryDate }}</p>
-            </div>
-          }
+        <div *ngIf="planet?.discoveredBy" class="discovery-section fade-in">
+          <h3>Descubrimiento</h3>
+          <p>Descubierto por: {{ planet?.discoveredBy }}</p>
+          <p>Fecha: {{ planet?.discoveryDate || 'Desconocida' }}</p>
         </div>
-      } @else {
-        <div class="loading">
-          <div class="loading-spinner"></div>
-          <p>Cargando información del planeta...</p>
-        </div>
-      }
+      </div>
     </div>
   `,
   styles: [`
@@ -87,6 +85,31 @@ import { FavoritesService } from '../../services/favorites.service';
       padding: 2rem;
       max-width: 1200px;
       margin: 0 auto;
+    }
+
+    .loading-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 200px; // Ajusta según sea necesario
+      text-align: center;
+      color: white;
+
+      .spinner {
+        width: 40px;
+        height: 40px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
     }
 
     .planet-content {
@@ -338,7 +361,15 @@ import { FavoritesService } from '../../services/favorites.service';
         text-align: center;
       }
     }
-  `]
+  `],
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({ opacity: 0, transform: 'translateY(-20px)' }),
+        animate('800ms cubic-bezier(0.25, 0.8, 0.25, 1)', style({ opacity: 1, transform: 'translateY(0)' }))
+      ])
+    ])
+  ]
 })
 export class PlanetDetailComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -348,6 +379,7 @@ export class PlanetDetailComponent implements OnInit {
 
   planet: Planet | null = null;
   isFavorite = false;
+  isLoading = signal(true);
 
   ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
@@ -361,10 +393,12 @@ export class PlanetDetailComponent implements OnInit {
       next: (planet) => {
         this.planet = planet;
         this.isFavorite = this.favoritesService.isFavorite(id);
+        this.isLoading.set(false);
       },
       error: (error) => {
         console.error('Error loading planet:', error);
         this.router.navigate(['/planets']);
+        this.isLoading.set(false);
       }
     });
   }
@@ -380,8 +414,8 @@ export class PlanetDetailComponent implements OnInit {
     this.router.navigate(['/planets']);
   }
 
-  formatMass(mass: Planet['mass']): string {
-    return this.planetService.formatMass(mass);
+  formatMass(mass: Planet['mass'] | undefined): string {
+    return mass ? this.planetService.formatMass(mass) : 'Desconocido';
   }
 
   handleImageError(event: Event) {

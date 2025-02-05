@@ -1,5 +1,6 @@
 import { Injectable, signal, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Planet } from '../interfaces/planet.interface';
 
 @Injectable({
   providedIn: 'root'

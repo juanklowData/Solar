@@ -39,7 +39,6 @@ import { CommonModule } from '@angular/common';
       position: absolute;
       width: 100%;
       height: 100%;
-      background: url('/assets/images/stars.png') repeat;
       animation: rotate 200s linear infinite;
     }
 
@@ -47,7 +46,6 @@ import { CommonModule } from '@angular/common';
       position: absolute;
       width: 100%;
       height: 100%;
-      background: url('/assets/images/twinkling.png') repeat;
       animation: twinkle 4s linear infinite;
     }
 
