@@ -1,0 +1,16 @@
+<header class="header">
+  <nav class="navbar">
+    <h1 class="logo">Sistema Solar</h1>
+    <div class="nav-links">
+      <a routerLink="/planets" routerLinkActive="active">Planetas</a>
+    </div>
+  </nav>
+</header>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<footer class="footer">
+  <p>© {{ currentYear }} Sistema Solar Explorer</p>
+</footer>

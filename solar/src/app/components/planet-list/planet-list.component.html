@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="search-bar">
+      <input 
+        type="text" 
+        [ngModel]="searchQuery()" 
+        (ngModelChange)="updateSearch($event)" 
+        placeholder="Buscar planeta...">
+      <button (click)="toggleSort()">
+        Ordenar {{ sortOrder() === 'asc' ? '↑' : '↓' }}
+      </button>
+    </div>
+  
+    <div class="grid-container">
+      @for (planet of filteredPlanets(); track planet.id) {
+        <app-planet-card 
+          [planet]="planet">
+        </app-planet-card>
+      }
+    </div>
+  
+    <div class="pagination">
+      @for (page of totalPages(); track page) {
+        <button 
+          (click)="currentPage.set(page)"
+          [class.active]="currentPage() === page">
+          {{ page }}
+        </button>
+      }
+    </div>
+  </div>
