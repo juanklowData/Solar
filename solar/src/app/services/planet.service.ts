@@ -10,6 +10,9 @@ import { ImageGeneratorService } from './image-generator.service';
 export class PlanetService {
   private http = inject(HttpClient);
   private imageGenerator = inject(ImageGeneratorService);
+  /**
+   * URL base de la API de planetas
+   */
   private apiUrl = 'https://api.le-systeme-solaire.net/rest/bodies';
   private planetsCache: Planet[] = [];
 
@@ -25,6 +28,12 @@ export class PlanetService {
     'neptune': 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/63/Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg/600px-Neptune_-_Voyager_2_%2829347980845%29_flatten_crop.jpg'
   };
 
+  constructor() {}
+
+  /**
+   * Obtiene la lista completa de planetas
+   * @returns Observable con array de planetas
+   */
   getPlanets(): Observable<Planet[]> {
     return this.http.get<{bodies: Planet[]}>(this.apiUrl).pipe(
       map(response => response.bodies
@@ -38,6 +47,11 @@ export class PlanetService {
     );
   }
 
+  /**
+   * Obtiene un planeta específico por su ID
+   * @param id - Identificador único del planeta
+   * @returns Observable con los datos del planeta
+   */
   getPlanetById(id: string): Observable<Planet> {
     const cachedPlanet = this.planetsCache.find(p => p.id === id);
     if (cachedPlanet) {

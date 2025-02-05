@@ -107,41 +107,41 @@ import { Planet } from '../../interfaces/planet.interface';
 export class PlanetCardComponent {
   @Input({ required: true }) planet!: Planet;
   isFavorite: boolean = false;
-  private isBrowser: boolean;
+  private isBrowser: boolean; 
 
   constructor(
     private router: Router,
     @Inject(PLATFORM_ID) platformId: Object
   ) {
-    this.isBrowser = isPlatformBrowser(platformId);
+    this.isBrowser = isPlatformBrowser(platformId); // Determina el entorno
   }
 
   toggleFavorite(event: Event): void {
-    event.stopPropagation();
-    this.isFavorite = !this.isFavorite;
+    event.stopPropagation(); 
+    this.isFavorite = !this.isFavorite; // Alterna favorito
     
     if (this.isBrowser) {
-      localStorage.setItem(`favorite_${this.planet.id}`, this.isFavorite.toString());
+      localStorage.setItem(`favorite_${this.planet.id}`, this.isFavorite.toString()); // Guarda en localStorage
     }
   }
 
   navigateToDetail(): void {
-    this.router.navigate(['/planets', this.planet.id]);
+    this.router.navigate(['/planets', this.planet.id]); // Navega a detalles del planeta
   }
 
   handleImageError(event: any): void {
-    event.target.src = '/assets/images/default-planet.jpg';
+    event.target.src = '/assets/images/default-planet.jpg'; // Imagen por defecto
   }
 
   formatMass(mass: Planet['mass']): string {
     if (!mass) return 'Desconocida';
-    return `${mass.massValue} × 10^${mass.massExponent} kg`;
+    return `${mass.massValue} × 10^${mass.massExponent} kg`; // Formatea la masa
   }
 
   ngOnInit(): void {
     if (this.isBrowser) {
       const savedFavorite = localStorage.getItem(`favorite_${this.planet.id}`);
-      this.isFavorite = savedFavorite === 'true';
+      this.isFavorite = savedFavorite === 'true'; // Recupera estado favorito
     }
   }
 }

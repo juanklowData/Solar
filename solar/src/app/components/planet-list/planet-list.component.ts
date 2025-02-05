@@ -18,33 +18,24 @@ export class PlanetListComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
-  planets = signal<Planet[]>([]);
-  searchQuery = signal('');
-  sortOrder = signal<'asc' | 'desc'>('asc');
-  currentPage = signal(1);
-  readonly itemsPerPage = 5;
+  planets = signal<Planet[]>([]); // Lista de planetas
+  searchQuery = signal(''); // Búsqueda
+  sortOrder = signal<'asc' | 'desc'>('asc'); // Orden
+  currentPage = signal(1); // Página actual
+  readonly itemsPerPage = 5; // Elementos por página
 
-  filteredPlanets = computed(() => {
-    return this.planets()
-      .filter(planet => 
-        planet.name.toLowerCase().includes(this.searchQuery().toLowerCase())
-      )
-      .sort((a, b) => {
-        const comparison = a.name.localeCompare(b.name);
-        return this.sortOrder() === 'asc' ? comparison : -comparison;
-      })
-      .slice(
-        (this.currentPage() - 1) * this.itemsPerPage,
-        this.currentPage() * this.itemsPerPage
-      );
-  });
+  filteredPlanets = computed(() => 
+    this.planets()
+      .filter(p => p.name.toLowerCase().includes(this.searchQuery().toLowerCase())) // Filtra
+      .sort((a, b) => this.sortOrder() === 'asc' ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)) // Ordena
+      .slice((this.currentPage() - 1) * this.itemsPerPage, this.currentPage() * this.itemsPerPage) // Pagina
+  );
 
   totalPages = computed(() => {
-    const filtered = this.planets().filter(planet => 
-      planet.name.toLowerCase().includes(this.searchQuery().toLowerCase())
+    const total = Math.ceil(
+      this.planets().filter(p => p.name.toLowerCase().includes(this.searchQuery().toLowerCase())).length / this.itemsPerPage
     );
-    const total = Math.ceil(filtered.length / this.itemsPerPage);
-    return Array.from({ length: total }, (_, i) => i + 1);
+    return Array.from({ length: total }, (_, i) => i + 1); // Calcula total de páginas
   });
 
   ngOnInit() {
@@ -54,16 +45,16 @@ export class PlanetListComponent implements OnInit {
 
   private loadPlanets() {
     this.planetService.getPlanets().subscribe({
-      next: (data) => this.planets.set(data),
+      next: (data) => this.planets.set(data), // Carga planetas
       error: (err) => console.error('Error loading planets:', err)
     });
   }
 
   private syncUrlParams() {
     this.route.queryParams.subscribe(params => {
-      if (params['search']) this.searchQuery.set(params['search']);
-      if (params['sort']) this.sortOrder.set(params['sort']);
-      if (params['page']) this.currentPage.set(Number(params['page']));
+      if (params['search']) this.searchQuery.set(params['search']); // Sincroniza búsqueda
+      if (params['sort']) this.sortOrder.set(params['sort']); // Sincroniza orden
+      if (params['page']) this.currentPage.set(Number(params['page'])); // Sincroniza página
     });
   }
 
@@ -74,7 +65,7 @@ export class PlanetListComponent implements OnInit {
   }
 
   toggleSort() {
-    this.sortOrder.update(current => current === 'asc' ? 'desc' : 'asc');
+    this.sortOrder.update(current => current === 'asc' ? 'desc' : 'asc'); // Alterna orden
     this.updateUrlParams();
   }
 
@@ -86,7 +77,7 @@ export class PlanetListComponent implements OnInit {
         sort: this.sortOrder(),
         page: this.currentPage()
       },
-      queryParamsHandling: 'merge'
+      queryParamsHandling: 'merge' // Mantiene otros params
     });
   }
 }
